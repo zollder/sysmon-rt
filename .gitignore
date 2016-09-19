@@ -1,0 +1,28 @@
+# Created by .gitignore support plugin (hsz.mobi)
+### Gradle template
+.gradle
+build/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+
+### Java template
+*.class
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.war
+*.ear
+
+*.project
+*.settings
+*.sublime-project
+*.tern-project
+
+# Frontend libs
+node_modules
+public/bower_components
+public/styles

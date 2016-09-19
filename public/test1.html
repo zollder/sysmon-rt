@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="bower_components/d3/d3.js" charset="UTF-8"></script>
+	</head>
+	<body>
+		<script type="text/javascript">
+			var url = "files/access.log";
+			var data = {'test':'my-data'};
+/* 			var request = new XMLHttpRequest();
+			request.open("GET", url, true);
+			request.onreadystatechange = function() {
+				if (request.readyState != 4 || request.status != 200)
+					return;
+				console.log(request.responseText);
+			};
+			request.send(); */
+			var request = d3.text(url, function(error, response) {
+				if (error) {
+					console.log("Something wrong happened");
+					throw error;
+				}
+				console.log(response);
+			});
+		</script>
+	</body>
+</html>

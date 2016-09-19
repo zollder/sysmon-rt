@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="bower_components/d3/d3.js" charset="UTF-8"></script>
+	<script src="bower_components/sizzle/dist/sizzle.min.js" charset="UTF-8"></script>
+	<script src="bower_components/angular/angular.js" type="text/javascript"></script>
+</head>
+<body>
+
+<!-- 	<div id='content' ng-app='sysmonjs' ng-controller='MainController'>
+		 <p>
+		 	<a ng-click="postIt()">Click here to load data.</a>
+		 </p>
+		 	Hello {{testData.name}}
+	</div> -->
+
+<!-- 	<p>Some fruits:</p>
+	<p class="item" id="first-item">Apple</p>
+	<p class="item" id="second-item">Banana</p>
+	<p class="item" id="third-item">Orange</p>
+	<script type="text/javascript">
+		var ps = d3.selectAll('p');
+		var items = d3.selectAll('.item');
+		var first = d3.select('#first-item');
+		
+		ps.attr('align', 'center');
+		items.style('background-color', 'red');
+		first.remove();
+	</script> -->
+	
+	<!-- <p>------------------------------------------------------------------------------------------</p> -->
+	
+<!-- 	<svg width="400" height="200">
+		<g>
+			<circle cx="50" cy="50" r="40" />
+			<circle cx="150" cy="50" r="40" />
+		</g>
+		<g>
+			<circle cx="250" cy="50" r="40" />
+			<circle cx="350" cy="50" r="40" />
+		</g>
+	</svg>
+	<script type="text/javascript">
+		// Get a Selection of the circles
+		var groups = d3.selectAll('g');
+		var circles = groups.selectAll('circle');
+		console.log(circles);
+		// [[<circle />, <circle />]]
+	</script> -->
+
+	<!-- <p>------------------------------------------------------------------------------------------</p> -->
+<!-- 	<p class="first">Apple, Banana and Orange</p>
+	<p class="second">Kiwi, Grapes and Pineapple</p>
+	<script type="text/javascript">
+		d3.select('p')
+			.style('color', 'red')
+			.style('font-size', '30px')
+			.style('font-weight', 'bold');
+		console.log(d3.select('p').style('color'));
+	</script>
+	
+	<input type="checkbox" name="my-box" >
+	<script type="text/javascript">
+		d3.select('input').property('checked', true);
+		console.log(d3.select('input').property('checked'));
+	</script>
+	
+	<script type="text/javascript">
+		d3.selectAll('p').each(function(d, i) {
+			console.log( d3.select(this).text());
+		});
+	</script> -->
+	
+<!-- 	<svg width="400" height="200">
+		<circle/>
+		<circle/>
+		<circle/>
+		<circle/>
+	</svg>
+	<script type="text/javascript">
+		// Create a data array containing objects
+		var data = [
+			{cx:50, cy:50, r: 10, color: '#ff0000'},
+			{cx:150, cy:50, r: 20, color: '#ff0066'},
+			{cx:250, cy:50, r: 30, color: '#ff00aa'},
+			{cx:350, cy:50, r: 40, color: '#ff00ff'}
+		];
+
+		// Bind data array to the Selection
+		var circles = d3.selectAll('circle').data(data);
+
+		// Use dynamic properties for the radius
+		console.log(circles.data());
+		circles
+			.attr('stroke', 'black')
+			.style('stroke-width', function(dataElement, dataIndex) { return dataIndex*2; })
+			.attr('r', function(dataElement, dataIndex) { return dataElement.r; })
+			.attr('fill', function(dataElement, dataIndex) { return dataElement.color; })
+			.attr('cx', function(dataElement, dataIndex) { return dataElement.cx; })
+			.attr('cy', function(dataElement, dataIndex) { return dataElement.cy; })
+	</script> -->
+	
+<!-- 	<svg width="800" height="500"></svg>
+	<script type="text/javascript">
+		var svg = d3.select('svg');
+
+		// Get an empty Selection of all circle elements and bind a data array to the selection
+		var data = [10, 20, 30]
+		var circles = svg.selectAll('circle');
+
+		// Get the enter Selection (new elements) and append circle elements
+		circles
+			.data(data)
+			.enter()
+			.append('circle')
+			.attr('stroke', 'black')
+			.attr('cx', function(d, i) { return (i+1)*100; })
+			.attr('cy', 50)
+			.attr('r', function(d) { return d; });
+		
+		svg.selectAll('circle')
+			.data([10,20])
+			.exit()
+			.remove();
+
+	</script> -->
+
+<!-- 	<svg width="800" height="500"></svg>
+	<script type="text/javascript">
+		// Create a data array
+		var data = [];
+		// Do every 1s
+		setInterval(function() {
+			// Add new random element to data array
+			if (data.length < 8) {
+				data.push(Math.random());
+			} else {
+				data = [];
+			}
+			
+			// Redraw the scene
+			draw();
+		}, 1000);
+
+		function draw() {
+			var svg = d3.select('svg');
+			// Bind data array to the Selection
+			var circles = svg.selectAll('circle').data(data);
+			// Update all original elements from the Selection
+			circles.attr('fill', 'orange');
+			// Update all elements, that are new to the Selection
+			circles.enter()
+				.append('circle')
+				.attr('fill', 'red')
+				.attr('r', 40)
+				.attr('cx', function(d, i) { return i*100 + 50; })
+				.attr('cy', 50);
+				
+				// Update all elements in the Selection
+				circles.style('stroke', 'black');
+		
+				// Update all elements, that are removed from the Selection
+				circles.exit().remove();
+		}
+	</script> -->
+	
+	<style type="text/css">
+		.axis path, .axis line {
+			fill: none;
+			stroke: #999;
+			shape-rendering: crispEdges;
+		}
+		.tick {
+			font: 10px sans-serif;
+		}
+	</style>
+	
+	<script type="text/javascript">
+
+		var width = 800;
+		var height = 500;
+
+		// create containers
+		var svg = d3.select('body').append('svg')
+			.attr('width', width)
+			.attr("height", height);
+		var svgData = svg.append('g')
+			.attr('class', 'data');
+		var svgAxis = svg.append('g')
+			.attr('class', 'axis');
+		var svg_xAxis = svgAxis.append('g')
+			.attr('class', 'x-axis');
+		var svg_yAxis = svgAxis.append('g')
+			.attr('class', 'y-axis');
+		
+		// define margins
+		var margins = { top:40, right:40, bottom:40, left:60 };
+		
+		// values domain
+		var startDate = new Date('2013-01-01');
+		var endDate = new Date('2013-12-31');
+		
+		// generate random data point
+		var randomPoint = function() {
+			var random = Math.random;
+			var randomTime = startDate.getTime() + random() * (endDate.getTime() - startDate.getTime());
+			var point = {
+				x:new Date(randomTime),
+				y:random()*5000,
+				r:random()*10
+			}
+			return point;
+		}
+
+		// create an array and fill it with random data points
+		var data = d3.range(300).map(randomPoint);
+
+		// create draw function to render the chart
+		function draw() {
+
+			// create time/linear scales for x/y axis
+			var xScale = d3.scaleTime()
+				.domain([startDate, d3.max(data, function(point) { return point.x; })])
+				.range([margins.left, width - margins.right])
+				.nice();
+			var yScale = d3.scaleLinear()
+				.domain([0, d3.max(data, function(point) { return point.y; })])
+				.range([margins.top, height - margins.bottom])
+				.nice();
+
+			// configure and draw x/y axis
+			var xAxis = d3.axisTop()
+				.scale(xScale)
+				.tickFormat(d3.timeFormat('%b %d'));
+			svg_xAxis.attr("transform", "translate(0, " + margins.top + ")")
+				.call(xAxis);
+
+			var yAxis = d3.axisLeft()
+				.scale(yScale)
+				.tickFormat(d3.format(".3s"));
+			svg_yAxis.attr("transform", "translate(" + margins.left + ")")
+				.call(yAxis);
+				
+			// a function to identify circle elements
+			function key(elem, index) {
+				return elem.x + '#' + elem.y;
+			}
+
+			// bind data array to the selection
+			var circles = svgData.selectAll('circle').data(data, key);
+
+			// update the dataset and add circles for new data
+			circles
+				.enter()
+				.append('circle')
+				.attr('r', function(elem) { return elem.r })
+				.attr('cx', function(elem) { return xScale(elem.x) })
+				.attr('cy', function(elem) { return yScale(elem.y) });
+			
+			// change the fill color of all array elements
+ 			circles.attr('fill', function(elem, index) {
+					return 'rgb(' + parseInt(elem.r*25) + ',0,0)';
+			});
+			
+			// delete points(nodes) that were removed from the data source array
+			circles
+				.exit()
+				.remove();
+		}
+		
+		// add a new element to the array every 150 ms, and remove the 1st one
+		setInterval(function() {
+			data.shift();
+			data.push(randomPoint());
+			draw();
+		}, 50);
+
+	</script>
+	
+<!-- 	<script type="text/javascript">
+		var scale = d3.scaleLinear()
+			.domain([0, 10])
+			.range([0, 150]);
+		var axis = d3.axisBottom().scale(scale);
+		d3.select('body')
+			.append('svg')
+				.attr('class', 'axis')
+				.attr('width', 200)
+			.append('g')
+				.call(axis);
+	</script> -->
+
+	<script src="scripts/app.js" type="text/javascript"></script>
+	<script src="scripts/controllers/maincontroller.js" type="text/javascript"></script>
+</body>
+</html>
