@@ -10,11 +10,30 @@
 	
 		      // Main application controller
 		      .controller('MainCtrl', ["$scope", "$http", function ($scope, $http) {
+		    	  var logdata;
 		    	  var url = "files/access.log";
-		    	  var promise = $http.get(url)
-		    	  console.log(promise);
-		    	  promise.then(function(response) {
-		    		  console.log(response);
+		    	  $http.get(url).then(function(response) {
+		    		  logdata = response.data;
+		    		  console.log(logdata);
+		    		  
+			    	  var lines = logdata.trim().split("\n").map(function(line) {
+			    		  return line.split(/[-"]/gi).map(function(element) {
+			    			  return element.trim().replace(/["\[\]]/gi, '');
+			    		  });
+			    	  });
+			    	  console.log(lines);
+			    	  
+			    	  var parseTime = d3.timeParse("%d/%b/%Y:%H:%M:%S %Z");
+			    	  lines = lines.map(function(items) {
+			    		  return {
+			    			  ip: items[0],
+			    			  time: parseTime(items[2]),
+			    			  request: items[3],
+			    			  status: items[4],
+			    			  agent: items[8]
+			    		  };
+			    	  });
+			    	  console.log(lines);
 		          });
 		      }]);
 		</script>
