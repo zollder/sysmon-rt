@@ -6,7 +6,7 @@ var expression = /^([0-9]{0,3}\.[0-9]{0,3}\.[0-9]{0,3}\.[0-9]{0,3})\s*-(.*?)-\s*
  */
 describe('http-loader-test', function() {
 
-	var element, scope, loader, httpMock;
+	var loader, httpMock;
 
 	beforeEach(module('sysmonjs'));
 

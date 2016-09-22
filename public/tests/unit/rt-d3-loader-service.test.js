@@ -7,7 +7,7 @@ var expression = /^([0-9]{0,3}\.[0-9]{0,3}\.[0-9]{0,3}\.[0-9]{0,3})\s*-(.*?)-\s*
  */
 describe('d3-loader-test', function() {
 
-	var element, scope, loader, result;
+	var loader, result;
 
 	// load d3mod module and inject the loader before each test run
 	beforeEach(module('d3mod'));
