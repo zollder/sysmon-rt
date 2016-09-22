@@ -14,13 +14,13 @@ angular.module('d3mod', [])
 })
 
 /**
- * Creates an injectable data loading service.
- *
+ * Creates an injectable data d3-based loading service.
+ * Returns loaded data in the plain text format.
  */
-.factory('d3loader', ["d3",
+.factory('D3LoaderService', ["d3",
 	function(d3) {
 		return function(url, callback) {
-			d3.text(url, 'text/plain', callback);
+			d3.text(url, callback);
 		};
 	}
 ]);

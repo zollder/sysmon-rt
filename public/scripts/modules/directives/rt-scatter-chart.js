@@ -62,7 +62,8 @@ angular.module('d3mod')
 		};
 
 		/**
-		 * Directive's core implementation
+		 * Directive's core implementation.
+		 * Nests draw() function inside a dataLoader callback (disadvantage)
 		 */
 		return {
 			restrict: 'E',
@@ -92,7 +93,7 @@ angular.module('d3mod')
 							}
 						});
 
-						// update/redraw the chart
+						// callback: update/redraw the chart
 						draw(svg, width, height, data);
 					}, true);
 				};

@@ -1,27 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="myApp">
 	<head>
 		<script src="bower_components/d3/d3.js" charset="UTF-8"></script>
-	</head>
-	<body>
+		<script src="bower_components/angular/angular.js" charset="UTF-8"></script>
 		<script type="text/javascript">
-			var url = "files/access.log";
-			var data = {'test':'my-data'};
-/* 			var request = new XMLHttpRequest();
-			request.open("GET", url, true);
-			request.onreadystatechange = function() {
-				if (request.readyState != 4 || request.status != 200)
-					return;
-				console.log(request.responseText);
-			};
-			request.send(); */
-			var request = d3.text(url, function(error, response) {
-				if (error) {
-					console.log("Something wrong happened");
-					throw error;
-				}
-				console.log(response);
-			});
+		
+		      // Application Module 
+		      angular.module('myApp', [])
+	
+		      // Main application controller
+		      .controller('MainCtrl', ["$scope", "$http", function ($scope, $http) {
+		    	  var url = "files/access.log";
+		    	  var promise = $http.get(url)
+		    	  console.log(promise);
+		    	  promise.then(function(response) {
+		    		  console.log(response);
+		          });
+		      }]);
 		</script>
+	</head>
+	<body ng-controller="MainCtrl">
 	</body>
 </html>

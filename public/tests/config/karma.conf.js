@@ -19,7 +19,8 @@ module.exports = function(config) {
         'bower_components/angular-mocks/angular-mocks.js',
         'bower_components/d3/d3.js',
         'scripts/**/*.js',
-        'tests/**/*.test.js'
+        'tests/**/*.test.js',
+        {pattern: 'tests/files/**', included: false}
     ],
 
 
