@@ -34,7 +34,7 @@ angular.module('d3mod')
 			// define x/y-axis
 			var xAxis = d3.axisTop()
 				.scale(xScale)
-				.tickFormat(d3.timeFormat("%S"));
+				.tickFormat(d3.timeFormat("%H:%I"));
 			var yAxis = d3.axisLeft()
 				.scale(yScale)
 				.tickFormat(d3.format(".1f"));
@@ -63,14 +63,13 @@ angular.module('d3mod')
 
 		/**
 		 * Directive's core implementation.
-		 * Nests draw() function inside a dataLoader callback (disadvantage)
 		 */
 		return {
 			restrict: 'E',
 			scope: {
 				data: '='
 			},
-			compile: function(element, attrs, transclude) {
+			compile: function(element) {
 				// Create a SVG root element
 				var svg = d3.select(element[0]).append('svg');
 
@@ -81,20 +80,17 @@ angular.module('d3mod')
 				// Define the dimensions for the chart
 				var width = 400, height = 300;
 
-				// Return the link function
-				return function(scope, element, attrs) {
+				// Return link function (links directive to the DOM)
+				return function(scope) {
 					// watch the data attribute of the scope
 					scope.$watch('data', function(newVal, oldVal, scope) {
 						// map external data to internal generalized draw function format
-						var data = scope.data.map(function(element) {
-							return {
-								x: element.time,
-								y: element.visitors
+						var data = scope.data.map(function() {
+							// Update the chart
+							if (scope.data) {
+								draw(svg, width, height, scope.data);
 							}
 						});
-
-						// callback: update/redraw the chart
-						draw(svg, width, height, data);
 					}, true);
 				};
 			}
