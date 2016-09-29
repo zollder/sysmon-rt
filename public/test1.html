@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="myApp">
+<html>
 	<head>
 		<script src="bower_components/d3/d3.js" charset="UTF-8"></script>
 		<script src="bower_components/angular/angular.js" charset="UTF-8"></script>
@@ -39,6 +39,7 @@
 		</script> -->
 		<style type="text/css">
 			path {
+				stroke: steelblue;
 				stroke-width: 2;
 				fill: none;
 			}
@@ -55,7 +56,14 @@
 				.attr("width", 800)
 				.attr("height", 400);
 			
-				var line1 = svg.append("path")
+			var g = svg.append("g");
+			
+			var quadratic1 = svg.append("path")
+				.attr("d", 'M15,15 Q200,300 400,100 Q500,50 800,100');
+			var quadratic2 = svg.append("path")
+				.attr("d", 'M15,215 Q200,500 400,300 T800,300');
+			
+/* 				var line1 = svg.append("path")
 					.style("stroke", 'steelblue')
 					.attr("d", 'M15,15  L100,100 300,100 400,15');
 
@@ -75,7 +83,9 @@
 					.style("stroke", 'green')
 					.attr("d", 'M410,5  V110');
 				
-				// add circles to point coodinates
+				var cubic = svg.append("path")
+					.attr("d", 'M15,15 C15,300 200,15 400,200');
+				
 				var g = svg.append("g");
 				
 				g.selectAll("circle.vline")
@@ -106,7 +116,7 @@
 					.style("fill", 'steelblue')
 					.attr("cx", function(d) {return d[0]; })
 					.attr("cy", function(d) {return d[1]; })
-					.attr("r", 3);
+					.attr("r", 3); */
 				
 		</script>
 	</body>
