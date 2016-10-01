@@ -41,7 +41,8 @@
 			path {
 				stroke: steelblue;
 				stroke-width: 2;
-				fill: none;
+				fill: steelblue;
+				fill-opacity: 0.3;
 			}
 			circle {
 				stroke: none;
@@ -54,14 +55,56 @@
 		
 			var svg = d3.select("body").append("svg")
 				.attr("width", 800)
-				.attr("height", 400);
+				.attr("height", 800);
 			
-			var g = svg.append("g");
+			
+			var arcPoints =[[0, 15, 'red'], [20, 90, 'green'], [110, 180, 'orange']];
+			
+			var arc = d3.arc()
+				.innerRadius(40)
+				.outerRadius(100)
+				.startAngle(function(d) { return d[0] * Math.PI/180; })
+				.endAngle(function(d) { return d[1] * Math.PI/180; });
+			var shape1 = svg.selectAll("path")
+				.data(arcPoints)
+				.enter()
+				.append("path")
+				.attr("d", arc)
+				.style("fill", function(d) { return d[2]; })
+				.attr("transform", 'translate(200,200)');
+
+/*  			var points =[[15,15], [200,300], [400,100]];
+			
+			var area = d3.area()
+				.y0(function(d) { return d[1] + 90; });
+			var shape1 = svg.append("path")
+				.datum(points)
+				.attr("d", area.curve(d3.curveCardinal.tension(0))); */
+			
+/* 			var line1 = svg.append("path")
+				.datum(points1)
+				.style("stroke", 'green')
+				.attr("d", d3.line().curve(d3.curveCardinal.tension(0)));
+			
+			var line1 = svg.append("path")
+				.datum(points1)
+				.style("stroke", 'red')
+				.attr("d", d3.line().curve(d3.curveCardinal.tension(0.25)));
+			
+			var line1 = svg.append("path")
+				.datum(points1)
+				.style("stroke", 'orange')
+				.attr("d", d3.line().curve(d3.curveCardinal.tension(0.5)));
+			
+			var points2 =[[15,415], [200,700], [400,500]]; */
+			
+			
+/* 			var g = svg.append("g");
 			
 			var quadratic1 = svg.append("path")
 				.attr("d", 'M15,15 Q200,300 400,100 Q500,50 800,100');
 			var quadratic2 = svg.append("path")
-				.attr("d", 'M15,215 Q200,500 400,300 T800,300');
+				.attr("d", 'M15,215 Q200,500 400,300 T800,300'); */
 			
 /* 				var line1 = svg.append("path")
 					.style("stroke", 'steelblue')

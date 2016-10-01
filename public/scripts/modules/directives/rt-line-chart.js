@@ -1,19 +1,16 @@
 'use strict';
 
 /**
- * Scatter chart directive.
- * Creates complete chart including parent svg container, axis, and all data points.
- * Binds data and chart options to the private scope of the directive.
- * Returns the directive as an element with the private scope.
+ * Line chart directive.
  */
 angular.module('d3mod')
 
-.directive('rtScatterChart', ["d3",
+.directive('rtLineChart', ["d3",
 	function(d3) {
 
 		/**
-		 * Generalized draw helper function.
-		 * Renders scatter chart based on specified parameters and data.
+		 * Generalized line chart draw helper function.
+		 * Renders line chart based on specified parameters and data.
 		 */
 		var draw = function(svg, width, height, data) {
 			svg
@@ -29,29 +26,40 @@ angular.module('d3mod')
 				.range([margin, width - margin]);
 			var yScale = d3.scaleTime()
 				.domain([0, d3.max(data, function(element) { return element.y; })])
-				.range([margin, height - margin]);
+				.range([height - margin,  margin]);
 
 			// define x/y-axis
-			var xAxis = d3.axisTop()
+			var xAxis = d3.axisBottom()
 				.scale(xScale)
 				.tickFormat(d3.timeFormat("%H:%I"));
 			var yAxis = d3.axisLeft()
 				.scale(yScale)
-				.tickFormat(d3.format(".1f"));
+				.tickFormat(d3.format(".0f"));
 
 			// draw x/y axis
 			svg.select('.x-axis')
-				.attr("transform", "translate(0, " + margin + ")")
+				.attr("transform", "translate(0, " + (height - margin) + ")")
 				.call(xAxis);
 			svg.select('.y-axis')
 				.attr("transform", "translate(" + margin + ")")
 				.call(yAxis);
 
+			// draw x-grid
+			svg.select(".x-grid")
+				.attr("transform", "translate(0, " + margin + ")")
+				.call(xAxis.tickSize(height - 2*margin, 0, 0).tickFormat(""));
+
+			// draw y-grid
+			svg.select(".y-grid")
+				.attr("transform", "translate(" + margin + ")")
+				.call(yAxis.tickSize(-width + 2*margin, 0, 0).tickFormat(""));
+
 			// add new data points
 			svg.select('.data')
 				.selectAll('circle').data(data)
 				.enter()
-				.append('circle');
+				.append('circle')
+				.attr('class', 'data-point');
 
 			// update all data points
 			svg.select('.data')
@@ -59,6 +67,26 @@ angular.module('d3mod')
 				.attr('r', 2.5)
 				.attr('cx', function(element) { return xScale(element.x); })
 				.attr('cy', function(element) { return yScale(element.y); });
+
+			svg.select('.data')
+				.selectAll('circle').data(data)
+				.exit()
+				.remove();
+
+			// draw a line
+			var line = d3.line()
+				.x(function(element) { return xScale(element.x); })
+				.y(function(element) { return yScale(element.y); })
+				.curve(d3.curveCardinal);
+			svg.select(".data-line").datum(data).attr("d", line);
+
+			// draw an area
+			var area = d3.area()
+				.x(function(element) { return xScale(element.x); })
+				.y0(yScale(0))
+				.y1(function(element) { return yScale(element.y); })
+				.curve(d3.curveCardinal);
+			svg.select(".data-area").datum(data).attr("d", area);
 		};
 
 		/**
@@ -73,9 +101,19 @@ angular.module('d3mod')
 				// Create a SVG root element
 				var svg = d3.select(element[0]).append('svg');
 
-				svg.append('g').attr('class', 'data');
-				svg.append('g').attr('class', 'x-axis axis');
-				svg.append('g').attr('class', 'y-axis axis');
+				// create containers
+				var axis_container = svg.append('g').attr('class', 'axis');
+				var data_container = svg.append('g').attr('class', 'data');
+
+				// add container elements
+				axis_container.append('g').attr('class', 'x-grid grid');
+				axis_container.append('g').attr('class', 'y-grid grid');
+
+				axis_container.append('g').attr('class', 'x-axis axis');
+				axis_container.append('g').attr('class', 'y-axis axis');
+
+				data_container.append('path').attr('class', 'data-line');
+				data_container.append('path').attr('class', 'data-area');
 
 				// Define the dimensions for the chart
 				var width = 1000, height = 500;
