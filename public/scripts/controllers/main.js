@@ -32,7 +32,7 @@ angular.module('sysmonjs')
 				};
 			},
 			// group the x-values in an interval of x minutes
-			minutes: 5
+			minutes: 15
 		};
 
 		// load and process data logs from the file
