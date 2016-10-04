@@ -19,6 +19,7 @@ angular.module('d3mod')
 
 			// define a margin
 			var margin = 50;
+			var duration = 2500;
 
 			// define x/y-scale
 			var xScale = d3.scaleTime()
@@ -54,6 +55,32 @@ angular.module('d3mod')
 				.attr("transform", "translate(" + margin + ")")
 				.call(yAxis.tickSize(-width + 2*margin, 0, 0).tickFormat(""));
 
+			/*
+			 * Custom interpolation function for arrays of objects in the form of {x:0,y:0}.
+			 * Is used to animate d attribute.
+			 */
+			var interpolatePoints = function(A, B) {
+				var interpolatorX = d3.interpolateArray(
+					A.map(function(d) { return d.x; }),
+					B.map(function(d) { return d.x; })
+				);
+				var interpolatorY = d3.interpolateArray(
+					A.map(function(d) { return d.y; }),
+					B.map(function(d) { return d.y; })
+				);
+				return function(t) {
+					var x = interpolatorX(t);
+					var y = interpolatorY(t);
+
+					return x.map(function(d,i) {
+						return {
+							x: x[i],
+							y: y[i]
+						};
+					});
+				};
+			};
+
 			// add new data points
 			svg.select('.data')
 				.selectAll('circle').data(data)
@@ -61,32 +88,69 @@ angular.module('d3mod')
 				.append('circle')
 				.attr('class', 'data-point');
 
-			// update all data points
+			// update and animate all data points
 			svg.select('.data')
 				.selectAll('circle').data(data)
 				.attr('r', 2.5)
-				.attr('cx', function(element) { return xScale(element.x); })
-				.attr('cy', function(element) { return yScale(element.y); });
+				.attr('cx', function(d) { return xScale(d.x); })
+				.attr('cy', yScale(0))
+				.transition()
+				.duration(duration)
+				.attr('cy', function(d) { return yScale(d.y); });
 
 			svg.select('.data')
 				.selectAll('circle').data(data)
 				.exit()
 				.remove();
 
-			// draw a line
+			// draw and animate a line
 			var line = d3.line()
 				.x(function(element) { return xScale(element.x); })
 				.y(function(element) { return yScale(element.y); })
 				.curve(d3.curveCardinal);
-			svg.select(".data-line").datum(data).attr("d", line);
+			svg.select(".data-line")
+				.datum(data)
+				.attr("d", line)
+				.transition()
+				.duration(duration)
+				.attrTween("d", function() {
+					var minValue = d3.min(data, function(d){ return d.y; });
+					var start = data.map(function(d) {
+						return {
+							x: d.x,
+							y: minValue
+						};
+					});
+					return function(t) {
+						var interpolate = interpolatePoints(start, data);
+						return line(interpolate(t));
+					};
+				});
 
-			// draw an area
+			// draw and animate an area
 			var area = d3.area()
 				.x(function(element) { return xScale(element.x); })
 				.y0(yScale(0))
 				.y1(function(element) { return yScale(element.y); })
 				.curve(d3.curveCardinal);
-			svg.select(".data-area").datum(data).attr("d", area);
+			svg.select(".data-area")
+				.datum(data)
+				.attr("d", area)
+				.transition()
+				.duration(duration)
+				.attrTween("d", function() {
+					var min = d3.min(data, function(d){ return d.y; });
+					var start = data.map(function(d) {
+						return {
+							x: d.x,
+							y: min
+						};
+					});
+					return function(t) {
+						var interpolate = interpolatePoints(start, data);
+						return area(interpolate(t));
+					};
+				});
 		};
 
 		/**

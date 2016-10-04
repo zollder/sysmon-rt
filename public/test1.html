@@ -57,8 +57,66 @@
 				.attr("width", 800)
 				.attr("height", 800);
 			
+			var blue = d3.rgb(0,0,255);
+			var red = d3.rgb(255,0,0);
+			var duration = 2500; //ms
+			var elementsPerRow = 15;
+
+			var data = [];
+			for (var i=0; i<105; i++) {
+				data.push(i);
+			}
 			
-			var arcPoints =[[0, 15, 'red'], [20, 90, 'green'], [110, 180, 'orange']];
+			var circles = svg.selectAll("circle")
+				.data(data)
+				.enter()
+				.append("circle")
+				.attr("class", "frame")
+				.attr("cx", function(d,i) { return (i%elementsPerRow + 1)*50; })
+				.attr("cy", function(d,i) { return Math.floor(i/elementsPerRow + 1)*50; })
+				.attr("r", 25);
+			
+			circles
+				.style("fill", blue)
+				.transition()
+				.delay(function(d,i) { return i*100; })
+				.duration(duration)
+				.on("end", function() {
+					d3.select(this).transition().attr("r", 15);
+				})
+				.style("fill", red);;
+
+/*
+			var svg = d3.select("body").append("svg")
+				.attr("width", 800)
+				.attr("height", 800);
+			
+			var circle = svg.append("circle")
+				.attr("class", "frame")
+				.attr("cx", 50)
+				.attr("cy", 50)
+				.attr("r", 25);
+			
+			var interpolate = d3.interpolateRgb(blue, red);	// 60FPS
+			var blue = d3.rgb(0,0,255);
+			var red = d3.rgb(255,0,0);
+			
+			var duration = 2500; //ms
+ 			var tickFn = function(elapsed) {
+				var t = elapsed/duration;
+				// Frame 0
+				if (t <= 1.0)
+					circle.style("fill", interpolate(t));
+				else {
+					circle.style("fill", interpolate(1));
+					return true;
+				}
+			}
+			
+			d3.timer(tickFn); */
+			
+			
+/* 			var arcPoints =[[0, 15, 'red'], [20, 90, 'green'], [110, 180, 'orange']];
 			
 			var arc = d3.arc()
 				.innerRadius(40)
@@ -71,7 +129,7 @@
 				.append("path")
 				.attr("d", arc)
 				.style("fill", function(d) { return d[2]; })
-				.attr("transform", 'translate(200,200)');
+				.attr("transform", 'translate(200,200)'); */
 
 /*  			var points =[[15,15], [200,300], [400,100]];
 			

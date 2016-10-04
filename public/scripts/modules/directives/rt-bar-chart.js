@@ -19,6 +19,7 @@ angular.module('d3mod')
 
 			// define a margin
 			var margin = 50;
+			var duration = 2500;
 
 			// define x/y-scale
 			var xScale = d3.scaleTime()
@@ -57,6 +58,8 @@ angular.module('d3mod')
 			// --------------Draw bars----------------
 
 			var barWidth = (width - 2*margin)/data.length;
+			var maxY = d3.max(data, function(d) { return d.y; })
+			var easeCube = d3.easeCubic;
 
 			// add new data points
 			svg.select('.data')
@@ -68,10 +71,15 @@ angular.module('d3mod')
 			// update all data points
 			svg.select('.data')
 				.selectAll('rect').data(data)
-				.attr('x', function(element) { return xScale(element.x) - barWidth/2; })
-				.attr('y', function(element) { return yScale(element.y); })
-				.attr('width', function(element) { return barWidth; })
-				.attr('height', function(element) { return yScale(0) - yScale(element.y); });
+				.attr('x', function(d) { return xScale(d.x) - barWidth/2; })
+				.attr('y', yScale(0))
+				.attr('width', function(d) { return barWidth; })
+				.attr('height', 0)
+				.transition()
+				.duration(function(d,i) {return duration*(d.y/maxY)})	// relative duration
+				.ease(d3.easeCubic)
+				.attr('y', function(d) { return yScale(d.y); })
+				.attr('height', function(d) { return yScale(0) - yScale(d.y); });
 
 			svg.select('.data')
 				.selectAll('rect').data(data)
