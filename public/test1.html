@@ -56,8 +56,39 @@
 			var svg = d3.select("body").append("svg")
 				.attr("width", 800)
 				.attr("height", 800);
+
+			var circle = svg.append("circle")
+				.attr("cx", 100)
+				.attr("cy", 100)
+				.attr("r", 50);
 			
-			var blue = d3.rgb(0,0,255);
+			var events = [
+				'click', 'dblclick',
+				'mouseover', 'mouseenter', 'mouseleave',
+				'mousemove', 'mousedown', 'mouseup'
+            ];
+			
+			events.map(function(event) {
+				circle.on(event, function() {
+					console.log("Triggered", d3.event.type);
+				});
+			});
+			
+/* 			svg.on('click', function() {
+				var e = d3.event;
+				
+				// Get relative cursor position
+				var xpos = (e.offsetX==undefined) ? e.layerX : e.offsetX;
+				var ypos = (e.offsetY==undefined) ? e.layerY : e.offsetY;
+				
+				svg.append("circle")
+					.attr("cx", xpos)
+					.attr("cy", ypos)
+					.style("fill", "steelblue")
+					.attr("r", 50);
+			}); */
+			
+/* 			var blue = d3.rgb(0,0,255);
 			var red = d3.rgb(255,0,0);
 			var duration = 2500; //ms
 			var elementsPerRow = 15;
@@ -84,7 +115,7 @@
 				.on("end", function() {
 					d3.select(this).transition().attr("r", 15);
 				})
-				.style("fill", red);;
+				.style("fill", red); */
 
 /*
 			var svg = d3.select("body").append("svg")

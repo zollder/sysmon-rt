@@ -6,9 +6,18 @@
 	</head>
 	<body ng-app="sysmonjs">
 		<div ng-controller="MainCtrl">
-			<rt-scatter-chart class="chart" data="log.data"></rt-scatter-chart>
+			<!-- rt-scatter-chart class="chart" data="log.data"></rt-scatter-chart-->
+
+			<!-- Line Chart -->
 			<rt-line-chart class="chart blue" data="log.data"></rt-line-chart>
-			<rt-bar-chart class="chart blue" data="log.data"></rt-bar-chart>
+
+			<!-- Bar Chart -->
+			<div>
+				<span>BarChart Cursor:</span>
+				<span> {{ display.cursor.date | date : 'dd.MM.yyyy HH:mm' }} </span>
+				<span> {{ display.cursor.value | number:2 }} </span>
+			</div>
+			<rt-bar-chart class="chart blue" cursor="display.cursor" data="log.data"></rt-bar-chart>
 		</div>
 
 		<script src="bower_components/d3/d3.js" charset="UTF-8"></script>

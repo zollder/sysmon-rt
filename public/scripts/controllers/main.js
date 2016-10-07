@@ -35,6 +35,14 @@ angular.module('sysmonjs')
 			minutes: 15
 		};
 
+		// initialize cursor object
+		$scope.display = {
+			cursor: {
+				date: 0,
+				value: 0
+			}
+		};
+
 		// load and process data logs from the file
 		HttpLoaderService($scope.log.src).then(function(response) {
 			// concat all responses to string

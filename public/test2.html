@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="bower_components/d3/d3.js" charset="UTF-8"></script>
+		<script src="bower_components/angular/angular.js" charset="UTF-8"></script>
+		<style type="text/css">
+			path {
+				stroke: steelblue;
+				stroke-width: 2;
+				fill: steelblue;
+				fill-opacity: 0.3;
+			}
+			circle {
+				stroke: none;
+			}
+		</style>
+	</head>
+	<!-- <body ng-controller="MainCtrl"> -->
+	<body>
+		<script type="text/javascript">
+		
+			var svg = d3.select("body").append("svg")
+				.attr("width", 800)
+				.attr("height", 800);
+			
+			var isDrawing = false;
+			
+			svg.on('mousemove', function() {
+				var pos = d3.mouse(this);
+				if (isDrawing) {
+					svg.append("circle")
+						.attr("cx", pos[0])
+						.attr("cy", pos[1])
+						.style("fill", "red")
+						.attr("r", 3);
+				}
+			}).on('mousedown', function() {
+				isDrawing = true;
+			}).on('mouseup', function() {
+				isDrawing = false;
+			})
+		</script>
+	</body>
+</html>
