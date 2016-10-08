@@ -32,11 +32,19 @@ angular.module('sysmonjs')
 				};
 			},
 			// group the x-values in an interval of x minutes
-			minutes: 15
+			minutes: 10
 		};
 
-		// initialize cursor object
-		$scope.display = {
+		// initialize barchart cursor object
+		$scope.barchart = {
+			cursor: {
+				date: 0,
+				value: 0
+			}
+		};
+
+		// initialize line-chart cursor object
+		$scope.linechart = {
 			cursor: {
 				date: 0,
 				value: 0

@@ -244,9 +244,9 @@ angular.module('d3mod')
 					/* Add "cursorchange" event listener/handler.
 					 * Listen on cursor changes, and update the scope variable outside the chart library. */
 					dispatcher.on('cursorchange', function(cursorData) {
-						console.log("Custom event called with args:", cursorData);
+//						console.log("Custom event called with args:", cursorData);
 						if (cursorData) {
-							// inform Angular about the change by triggering the "digest"
+							// inform Angular about the change by triggering the "digest" cycle
 							scope.$apply(function() {
 								scope.cursor = cursorData;
 							});
