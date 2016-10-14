@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+	<head>
+		<script src="bower_components/d3/d3.js" charset="UTF-8"></script>
+	    <script src="bower_components/angular/angular.js" type="text/javascript"></script>
+		<script src="bower_components/angular-animate/angular-animate.min.js" type="text/javascript"></script>
+		<script src="bower_components/angular-sanitize/angular-sanitize.min.js" type="text/javascript"></script>
+		<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js" type="text/javascript"></script>
+	    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+ 
+ 		<script type="text/javascript">
+		
+		      // Application Module 
+		      angular.module('myApp', ['ngAnimate', 'ngSanitize', 'ui.bootstrap'])
+	
+		      // Main application controller
+		      .controller('TestCtrl', function($scope) {
+		    	  
+		    	  // generate current date
+		    	  $scope.today = function() {
+		    		  $scope.dt = new Date();
+	    		  };
+	    		  $scope.today();
+	    		  
+	    		  $scope.clear = function() {
+	    			  $scope.dt = null;
+    			  };
+    			  
+    			  $scope.inlineOptions = {
+   					  customClass: getDayClass,
+   					  minDate: new Date(),
+   					  showWeeks: true
+				  };
+    			  
+    			  $scope.dateOptions = {
+   					  dateDisabled: disabled,
+   					  formatYear: 'yy',
+   					  maxDate: new Date(2020, 5, 22),
+   					  minDate: new Date(),
+   					  startingDay: 1
+				  };
+    			  
+    			  // Disable weekend selection
+    			  function disabled(data) {
+    				  var date = data.date,
+    				  mode = data.mode;
+    				  return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+   				  }
+    			  
+    			  // sets min date 
+    			  $scope.toggleMin = function() {
+    				  $scope.inlineOptions.minDate = $scope.inlineOptions.minDate ? null : new Date();
+    				  $scope.dateOptions.minDate = $scope.inlineOptions.minDate;
+   				  };
+   				  $scope.toggleMin();
+   				  
+   				  $scope.open1 = function() {
+   					  $scope.popup1.opened = true;
+				  };
+				  $scope.open2 = function() {
+					  $scope.popup2.opened = true;
+				  };
+				  
+				  $scope.setDate = function(year, month, day) {
+					  $scope.dt = new Date(year, month, day);
+				  };
+				  $scope.popup1 = {
+					  opened: false
+				  };
+				  $scope.popup2 = {
+					  opened: false
+				  };
+				  
+				  var tomorrow = new Date();
+				  tomorrow.setDate(tomorrow.getDate() + 1);
+
+				  var afterTomorrow = new Date();
+				  afterTomorrow.setDate(tomorrow.getDate() + 1);
+				  $scope.events = [
+	                   {
+	                	   date: tomorrow,
+	                	   status: 'full'
+                	   },
+                	   {
+                		   date: afterTomorrow,
+                		   status: 'partially'
+               		   }
+   				  ];
+				  
+				  function getDayClass(data) {
+					  var date = data.date;
+					  var mode = data.mode;
+					  if (mode === 'day') {
+						  var dayToCheck = new Date(date).setHours(0,0,0,0);
+						  
+		    		      for (var i = 0; i < $scope.events.length; i++) {
+		    		        var currentDay = new Date($scope.events[i].date).setHours(0,0,0,0);
+
+		    		        if (dayToCheck === currentDay) {
+		    		          return $scope.events[i].status;
+		    		        }
+		    		      }
+		    		    }
+
+		    		    return '';
+		    		  }
+		    		});
+		</script>
+		<style type="text/css">
+			path {
+				stroke: steelblue;
+				stroke-width: 2;
+				fill: steelblue;
+				fill-opacity: 0.3;
+			}
+			circle {
+				stroke: none;
+			}
+		</style>
+	</head>
+	<body>
+		<style>
+		  .full button span {
+		    background-color: limegreen;
+		    border-radius: 32px;
+		    color: black;
+		  }
+		  .partially button span {
+		    background-color: orange;
+		    border-radius: 32px;
+		    color: black;
+		  }
+		</style>
+		<div ng-controller="TestCtrl">
+		    <pre>Selected date is: <em>{{dt | date:'fullDate' }}</em></pre>
+		
+		    <div class="row">
+		      <div class="col-md-6">
+		        <p class="input-group">
+		          <input type="text" class="form-control" uib-datepicker-popup="dd-mm-yyyy" ng-model="dt" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+		          <span class="input-group-btn">
+		            <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+		          </span>
+		        </p>
+		      </div>
+		
+		      <div class="col-md-6">
+		        <p class="input-group">
+		          <input type="text" class="form-control" uib-datepicker-popup ng-model="dt" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+		          <span class="input-group-btn">
+		            <button type="button" class="btn btn-default" ng-click="open2()"><i class="glyphicon glyphicon-calendar"></i></button>
+		          </span>
+		        </p>
+		      </div>
+		    </div>
+		</div>
+	</body>
+</html>

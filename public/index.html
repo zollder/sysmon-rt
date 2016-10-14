@@ -3,31 +3,72 @@
 	<head>
 		<link rel="stylesheet" href="styles/css/app.css">
 		<link rel="stylesheet" href="styles/css/chart.css">
+		<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
 	</head>
 	<body ng-app="sysmonjs">
 		<div ng-controller="MainCtrl">
 			<!-- rt-scatter-chart class="chart" data="log.data"></rt-scatter-chart-->
 
-			<!-- Line Chart -->
-			<div>
-				<span>LineChart Cursor:</span>
-				<span> {{ linechart.cursor.date | date : 'dd.MM.yyyy HH:mm' }} </span>
-				<span> {{ linechart.cursor.value | number:2 }} </span>
+			</br>
+			<!-- Date/time pickers -->
+ 			<div class="row">
+				<div class="col-md-3">
+					<p class="input-group">
+						<input type="text" class="form-control"
+							datetime-picker="dd/MM/yyyy hh:mm"
+							is-open="datePickerIsOpen[0]"
+							ng-model="startDate"/>
+						<span class="input-group-btn">
+							<button type="button" class="btn btn-default" ng-click="openDatePicker($event, 0)">
+								<i class="glyphicon glyphicon-calendar"></i>
+							</button>
+						</span>
+					</p>
+					<!-- ul><li ng-repeat="open in opens">{{open}}</li></ul-->
+				</div>
+				<div class="col-md-3">
+					<p class="input-group">
+						<input type="text" class="form-control"
+							datetime-picker="dd/MM/yyyy hh:mm"
+							is-open="datePickerIsOpen[1]"
+							ng-model="endDate"/>
+						<span class="input-group-btn">
+							<button type="button" class="btn btn-default" ng-click="openDatePicker($event, 1)">
+								<i class="glyphicon glyphicon-calendar"></i>
+							</button>
+						</span>
+					</p>
+					<!-- ul><li ng-repeat="open in opens">{{open}}</li></ul-->
+				</div>
 			</div>
-			<rt-line-chart class="chart blue" cursor="linechart.cursor" data="log.data"></rt-line-chart>
+			<pre>Start date: <em>{{ startDate | date:'dd/MM/yyyy hh:mm' }}</em> End date: <em>{{ endDate | date:'dd/MM/yyyy hh:mm' }}</em></pre>
+			
+			<!-- Line Chart -->
+			<pre>Line chart cursor: <em>{{ linechart.cursor.date | date:'dd.MM.yyyy HH:mm' }} & {{ linechart.cursor.value | number:2 }}</em></pre>
+			<rt-line-chart
+				class="chart blue"
+				cursor="linechart.cursor"
+				data="log.data"
+				start-date="startDate"
+				end-date="endDate">
+			</rt-line-chart>
 
 			<!-- Bar Chart -->
-			<div>
-				<span>BarChart Cursor:</span>
-				<span> {{ barchart.cursor.date | date : 'dd.MM.yyyy HH:mm' }} </span>
-				<span> {{ barchart.cursor.value | number:2 }} </span>
-			</div>
-			<rt-bar-chart class="chart blue" cursor="barchart.cursor" data="log.data"></rt-bar-chart>
+			<pre>Bar chart cursor: <em>{{ barchart.cursor.date | date:'dd.MM.yyyy HH:mm' }} & {{ barchart.cursor.value | number:2 }}</em></pre>
+			<rt-bar-chart
+				class="chart blue"
+				cursor="barchart.cursor"
+				data="log.data"
+				start-date="startDate"
+				end-date="endDate">
+			</rt-bar-chart>
 		</div>
 
 		<script src="bower_components/d3/d3.js" charset="UTF-8"></script>
 		<script src="bower_components/angular/angular.js" type="text/javascript"></script>
-	
+		<script src="bower_components/bootstrap-ui-datetime-picker/dist/datetime-picker.min.js"></script>
+		<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+		
 		<script src="scripts/app.js" type="text/javascript"></script>
 		<script src="scripts/controllers/main.js" type="text/javascript"></script>
 		<script src="scripts/services/http-loader-service.js" type="text/javascript"></script>

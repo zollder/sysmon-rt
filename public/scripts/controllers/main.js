@@ -15,6 +15,20 @@ angular.module('sysmonjs')
     "ClassifierService",
 	function($scope, d3, HttpLoaderService, ParserService, ClassifierService) {
 
+    	$scope.startDate  = new Date('2014-11-24T00:00:00+0100');
+    	$scope.endDate  = new Date('2015-11-25T18:00:00+0100');
+
+    	//-----------Date-time picker logic------------
+    	$scope.datePickerIsOpen = [];
+    	$scope.openDatePicker = function($event, index) {
+    		if ($event) {
+    			$event.preventDefault();
+    			$event.stopPropagation(); // magic
+    		}
+    		this.datePickerIsOpen[index] = !this.datePickerIsOpen[index];
+    	};
+    	//----------------------------------------------------------
+
     	// init date strings parser, example: 22/Nov/2014:01:56:00 +0100
     	var parseTime = d3.timeParse("%d/%b/%Y:%H:%M:%S %Z");
 

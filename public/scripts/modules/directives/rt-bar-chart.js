@@ -5,14 +5,13 @@
  */
 angular.module('d3mod')
 
-.directive('rtBarChart', ["d3",
-	function(d3) {
-
+.directive('rtBarChart', ["d3", "$filter",
+	function(d3, $filter) {
 		/**
 		 * Generalized bar chart draw helper function.
 		 * Renders bar chart based on specified parameters and data.
 		 */
-		var draw = function(svg, width, height, data, dispatcher) {
+		function draw(svg, width, height, data, dispatcher) {
 			svg
 				.attr('width', width)
 				.attr('height', height);
@@ -77,7 +76,7 @@ angular.module('d3mod')
 				.attr('height', 0)
 				.transition()
 				.duration(function(d,i) { return duration*(d.y/maxY); })	// relative duration
-				.ease(d3.easeCubic)
+				.ease(easeCube)
 				.attr('y', function(d) { return yScale(d.y); })
 				.attr('height', function(d) { return yScale(0) - yScale(d.y); });
 
@@ -157,6 +156,7 @@ angular.module('d3mod')
 
 				xLabel
 					.transition()
+					.ease(easeCube)
 					.duration(delay)
 					.attr('transform', 'translate(' + xLeft + ',' + xTop + ') rotate(-90)');
 				xLabel.select('text').text(dateFormat(date));
@@ -167,6 +167,7 @@ angular.module('d3mod')
 
 				yLabel
 					.transition()
+					.ease(easeCube)
 					.duration(delay)
 					.attr('transform', 'translate('+ yLeft +','+ yTop +')');
 				yLabel.select('text').text(d3.format(".0f")(closestPoint.y));
@@ -178,6 +179,22 @@ angular.module('d3mod')
 		};
 
 		/**
+		 * Generalized bar chart draw helper function.
+		 * Renders bar chart based on specified parameters and data.
+		 */
+		function filter(data, minDate, maxDate) {
+			// create a shallow copy of the original data
+			var filteredData = data.slice(0);
+			if (minDate !== undefined) {
+				filteredData = $filter('gteDate')(filteredData, minDate);
+			}
+			if (maxDate !== undefined) {
+				filteredData = $filter('lteDate')(filteredData, maxDate);
+			}
+			return filteredData;
+		};
+
+		/**
 		 * Directive's core implementation.
 		 * Integrates the chart library and the application via an event system
 		 * with event registrations and an event handler function.
@@ -186,7 +203,9 @@ angular.module('d3mod')
 			restrict: 'E',
 			scope: {	// directive's private scope
 				data: '=',
-				cursor: '='
+				cursor: '=',
+				startDate: '=',
+				endDate: '='
 			},
 			compile: function(element) {
 				// Create an SVG root element
@@ -244,7 +263,6 @@ angular.module('d3mod')
 					/* Add "cursorchange" event listener/handler.
 					 * Listen on cursor changes, and update the scope variable outside the chart library. */
 					dispatcher.on('cursorchange', function(cursorData) {
-//						console.log("Custom event called with args:", cursorData);
 						if (cursorData) {
 							// inform Angular about the change by triggering the "digest" cycle
 							scope.$apply(function() {
@@ -254,14 +272,12 @@ angular.module('d3mod')
 					});
 
 					// watch the data attribute of the scope
-					scope.$watch('data', function(newVal, oldVal, scope) {
-						// map external data to internal generalized draw function format
-						var data = scope.data.map(function() {
-							// Update the chart
-							if (scope.data) {
-								draw(svg, width, height, scope.data, dispatcher);
-							}
-						});
+					scope.$watch('[data, startDate, endDate]', function(newVal, oldVal, scope) {
+						// Update the chart
+						if (scope.data) {
+							var filteredData = filter(scope.data, scope.startDate, scope.endDate);
+							draw(svg, width, height, filteredData, dispatcher);
+						}
 					}, true);
 				};
 			}

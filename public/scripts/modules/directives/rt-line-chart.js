@@ -5,8 +5,8 @@
  */
 angular.module('d3mod')
 
-.directive('rtLineChart', ["d3",
-	function(d3) {
+.directive('rtLineChart', ["d3", "$filter",
+	function(d3, $filter) {
 
 		/**
 		 * Generalized line chart draw helper function.
@@ -38,6 +38,16 @@ angular.module('d3mod')
 				.scale(yScale)
 				.tickFormat(d3.format(".0f"));
 
+			// define x/y-grid
+			var xGrid = d3.axisBottom()
+				.scale(xScale)
+				.tickSize(height - 2*margin, 0, 0)
+				.tickFormat("");
+			var yGrid = d3.axisLeft()
+				.scale(xScale)
+				.tickSize(-width + 2*margin, 0, 0)
+				.tickFormat("");
+
 			// draw x/y axis
 			svg.select('.x-axis')
 				.attr("transform", "translate(0, " + (height - margin) + ")")
@@ -46,15 +56,13 @@ angular.module('d3mod')
 				.attr("transform", "translate(" + margin + ")")
 				.call(yAxis);
 
-			// draw x-grid
+			// draw grids
 			svg.select(".x-grid")
 				.attr("transform", "translate(0, " + margin + ")")
-				.call(xAxis.tickSize(height - 2*margin, 0, 0).tickFormat(""));
-
-			// draw y-grid
+				.call(xGrid);
 			svg.select(".y-grid")
 				.attr("transform", "translate(" + margin + ")")
-				.call(yAxis.tickSize(-width + 2*margin, 0, 0).tickFormat(""));
+				.call(yGrid);
 
 			// add new data points
 			svg.select('.data')
@@ -91,7 +99,6 @@ angular.module('d3mod')
 				.datum(data)
 				.attr("d", lineStart)
 				.transition()
-				.ease(d3.easeCubic)
 				.duration(duration)
 				.attr("d", lineEnd);
 
@@ -110,7 +117,6 @@ angular.module('d3mod')
 				.datum(data)
 				.attr("d", areaStart)
 				.transition()
-				.ease(d3.easeCubic)
 				.duration(duration)
 				.attr("d", areaEnd);
 
@@ -159,15 +165,11 @@ angular.module('d3mod')
 
 				// 2 points have to be defined to draw each line
 				xCursor
-					.transition()
-					.duration(delay)
 					.attr('x1', xScale(closestPoint.x))
 					.attr('y1', yScale(0))
 					.attr('x2', xScale(closestPoint.x))
 					.attr('y2', yScale(yMax));
 		        yCursor
-					.transition()
-					.duration(delay)
 					.attr('x1', xScale(xMin))
 					.attr('y1', yScale(closestPoint.y))
 					.attr('x2', xScale(xMax))
@@ -185,6 +187,7 @@ angular.module('d3mod')
 
 				xLabel
 					.transition()
+					.ease(easeCube)
 					.duration(delay)
 					.attr('transform', 'translate(' + xLeft + ',' + xTop + ') rotate(-90)');
 				xLabel.select('text').text(dateFormat(date));
@@ -195,6 +198,7 @@ angular.module('d3mod')
 
 				yLabel
 					.transition()
+					.ease(easeCube)
 					.duration(delay)
 					.attr('transform', 'translate('+ yLeft +','+ yTop +')');
 				yLabel.select('text').text(d3.format(".0f")(closestPoint.y));
@@ -205,11 +209,37 @@ angular.module('d3mod')
 			});
 
 			// --------- ZOOMING ----------
+			var visible = svg.select('.visible');
 			var zoom = d3.zoom()
 				.on("zoom", function() {
-					svg.select('.visible').attr("transform", d3.event.transform);
+					// update x-axis and x-grid
+					svg.select('.x-axis').call(xAxis.scale(d3.event.transform.rescaleX(xScale)));
+					svg.select('.x-grid').call(xGrid.scale(d3.event.transform.rescaleX(xScale)));
+
+					var transform = d3.event.transform;
+					var transformX = 'translate(' + transform.x + ',' + '0) scale(' + transform.k + ',1)';
+
+					svg.select('.data').selectAll('circle').attr("transform", transformX);
+					svg.select(".data-line").attr('d', lineEnd).attr("transform", transformX);
+					svg.select(".data-area").attr('d', areaEnd).attr("transform", transformX);
 				});
 			svg.call(zoom);
+		};
+
+		/**
+		 * Generalized line chart draw helper function.
+		 * Renders line chart based on specified parameters and data.
+		 */
+		function filter(data, minDate, maxDate) {
+			// create a shallow copy of the original data
+			var filteredData = data.slice(0);
+			if (minDate !== undefined) {
+				filteredData = $filter('gteDate')(filteredData, minDate);
+			}
+			if (maxDate !== undefined) {
+				filteredData = $filter('lteDate')(filteredData, maxDate);
+			}
+			return filteredData;
 		};
 
 		/**
@@ -219,7 +249,9 @@ angular.module('d3mod')
 			restrict: 'E',
 			scope: {
 				data: '=',
-				cursor: '='
+				cursor: '=',
+				startDate: '=',
+				endDate: '='
 			},
 			compile: function(element) {
 				// Create a SVG root element
@@ -278,7 +310,6 @@ angular.module('d3mod')
 					/* Add "cursorchange" event listener/handler.
 					 * Listen on cursor changes, and update the scope variable outside the chart library. */
 					dispatcher.on('cursorchange', function(cursorData) {
-//						console.log("Custom event called with args:", cursorData);
 						if (cursorData) {
 							// inform Angular about the change by triggering the "digest" cycle
 							scope.$apply(function() {
@@ -288,14 +319,12 @@ angular.module('d3mod')
 					});
 
 					// watch the data attribute of the scope
-					scope.$watch('data', function(newVal, oldVal, scope) {
-						// map external data to internal generalized draw function format
-						var data = scope.data.map(function() {
-							// Update the chart
-							if (scope.data) {
-								draw(svg, width, height, scope.data, dispatcher);
-							}
-						});
+					scope.$watch('[data, startDate, endDate]', function(newVal, oldVal, scope) {
+						// Update the chart
+						if (scope.data) {
+							var filteredData = filter(scope.data, scope.startDate, scope.endDate);
+							draw(svg, width, height, filteredData, dispatcher);
+						}
 					}, true);
 				};
 			}
