@@ -17,6 +17,7 @@ angular.module('sysmonjs')
 
     	$scope.startDate  = new Date('2014-11-24T00:00:00+0100');
     	$scope.endDate  = new Date('2015-11-25T18:00:00+0100');
+    	$scope.date = [new Date('2014-11-24T00:00:00+0100'), new Date('2015-11-25T18:00:00+0100')];
 
     	//-----------Date-time picker logic------------
     	$scope.datePickerIsOpen = [];
@@ -83,7 +84,7 @@ angular.module('sysmonjs')
 				return Math.round(entry.time/coeff)*coeff;
 			});
 
-			console.log(groupedEntries);
+//			console.log(groupedEntries);
 
 			// save grouped dataset in the scope
 			$scope.log.data = groupedEntries;

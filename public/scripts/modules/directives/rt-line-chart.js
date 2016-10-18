@@ -209,7 +209,7 @@ angular.module('d3mod')
 			});
 
 			// --------- ZOOMING ----------
-			var visible = svg.select('.visible');
+/*			var visible = svg.select('.visible');
 			var zoom = d3.zoom()
 				.on("zoom", function() {
 					// update x-axis and x-grid
@@ -223,7 +223,7 @@ angular.module('d3mod')
 					svg.select(".data-line").attr('d', lineEnd).attr("transform", transformX);
 					svg.select(".data-area").attr('d', areaEnd).attr("transform", transformX);
 				});
-			svg.call(zoom);
+			svg.call(zoom);*/
 		};
 
 		/**

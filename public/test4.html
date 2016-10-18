@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="bower_components/d3/d3.js" charset="UTF-8"></script>
+		<script src="bower_components/angular/angular.js" charset="UTF-8"></script>
+		<style type="text/css">
+			.axis path, .axis line {
+				fill: none;
+				stroke: #999;
+				shape-rendering: crispEdges;
+			}
+			.brush .extent {
+				stroke: none;
+				stroke: rgba(255, 185, 88, 0.9);
+				fill-opacity: .125;
+				shape-rendering: crispEdges;
+			}
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+			var width = 800;
+			var height = 200;
+			var margin = 30;
+			
+			var svg = d3.select("body")
+				.append("svg")
+				.attr("width", width)
+				.attr("height", height);
+			
+			var xScale = d3.scaleLinear()
+				.domain([0, 10])
+				.range([margin, width - margin]);
+			
+			var xAxis = d3.axisTop().scale(xScale);
+			var brush = d3.brushX()
+				.extent([[0, 0], [width-2*margin, height-2*margin]]);
+				//.on("end", brushended);
+			
+			var axisContainer = svg.append('g').attr('class', 'axis');
+			axisContainer.append('g').attr('class', 'x-axis axis');
+
+			var brushContainer = axisContainer.append("g")
+				.attr("class", "brush")
+				.call(brush);
+			brushContainer.selectAll("rect")
+				.attr("y", margin)
+				.attr("height", height);
+			
+			svg.select('.x-axis')
+				.attr("transform", "translate(0, " + (height - margin) + ")")
+				.call(xAxis);
+		</script>
+	</body>
+</html>
