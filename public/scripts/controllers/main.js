@@ -2,6 +2,32 @@
 
 angular.module('sysmonjs')
 
+.factory('socket', ["$rootScope", function($rootScope) {
+	var socketIo = io.connect();
+	return {
+		// listen for events from the server
+		on: function(event, callback) {
+			socketIo.on(event, function() {
+				var args = arguments;
+				$rootScope.$apply(function() {
+					callback.apply(socketIo, args);
+				});
+			});
+		},
+		// send events to the server
+		emit: function(event, data, callback) {
+			socketIo.emit(event, data, function() {
+				var args = arguments;
+				$rootScope.$apply(function() {
+					if (callback) {
+						callback.apply(socketIo, args);
+					}
+				});
+			});
+		}
+	};
+}])
+
 /**
  * Main controller implemention.
  * Processes the log file prepare a dataset using underlying services to display a number
@@ -9,17 +35,18 @@ angular.module('sysmonjs')
  */
 .controller("MainCtrl", [
     "$scope",
+    "socket",
     "d3",
     "HttpLoaderService",
     "ParserService",
     "ClassifierService",
-	function($scope, d3, HttpLoaderService, ParserService, ClassifierService) {
+	function($scope, socket, d3, HttpLoaderService, ParserService, ClassifierService) {
 
+    	//-----------Date-time picker logic------------
     	$scope.startDate  = new Date('2014-11-24T00:00:00+0100');
     	$scope.endDate  = new Date('2015-11-25T18:00:00+0100');
     	$scope.date = [new Date('2014-11-24T00:00:00+0100'), new Date('2015-11-25T18:00:00+0100')];
 
-    	//-----------Date-time picker logic------------
     	$scope.datePickerIsOpen = [];
     	$scope.openDatePicker = function($event, index) {
     		if ($event) {
@@ -29,6 +56,23 @@ angular.module('sysmonjs')
     		this.datePickerIsOpen[index] = !this.datePickerIsOpen[index];
     	};
     	//----------------------------------------------------------
+
+    	/* ----Test socket connection and data transfer.--- */
+    	$scope.logs = [{
+    		name: 'apache.access',
+    		path: 'files/log/apache/access.log'
+    	}];
+
+    	angular.forEach($scope.logs, function(log) {
+    		socket.emit('watch', {
+    			name: log.name,
+    			path: log.path
+    		});
+    		socket.on(log.name, function(data) {
+    			console.log("Received: " + data);
+    		});
+    	});
+    	/* ------------------------------------------------ */
 
     	// init date strings parser, example: 22/Nov/2014:01:56:00 +0100
     	var parseTime = d3.timeParse("%d/%b/%Y:%H:%M:%S %Z");
@@ -83,8 +127,6 @@ angular.module('sysmonjs')
 				var coeff = 1000 * 60 * $scope.log.minutes; // (ms*s*min)
 				return Math.round(entry.time/coeff)*coeff;
 			});
-
-//			console.log(groupedEntries);
 
 			// save grouped dataset in the scope
 			$scope.log.data = groupedEntries;
